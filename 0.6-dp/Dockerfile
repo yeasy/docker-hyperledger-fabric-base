@@ -23,5 +23,8 @@ RUN cd /tmp \
         && ldconfig \
         && rm -rf /tmp/rocksdb
 
+RUN mkdir -p /var/hyperledger/db \
+        && mkdir -p /var/hyperledger/production
+
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
