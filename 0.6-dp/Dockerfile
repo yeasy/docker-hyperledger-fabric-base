@@ -29,7 +29,8 @@ RUN mkdir -p /var/hyperledger/db \
 # clone fabric 0.6 code to local
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b v0.6 --depth 1 http://gerrit.hyperledger.org/r/fabric
+        && git clone --single-branch -b v0.6 --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && cp $GOPATH/src/github.com/hyperledger/fabric/devenv/limits.conf /etc/security/limits.conf
 
 WORKDIR $GOPATH/src/github.com/hyperledger/fabric
 
