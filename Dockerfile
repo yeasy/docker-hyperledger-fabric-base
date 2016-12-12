@@ -24,9 +24,11 @@ RUN cd /tmp \
         && rm -rf /tmp/rocksdb
 
 RUN mkdir -p /var/hyperledger/db \
-        && mkdir -p /var/hyperledger/production
+        && mkdir -p /var/hyperledger/production \
+# fabric-order need this
+        && mkdir -p /etc/hyperledger/fabric 
 
-# clone fabric 0.6 code to local
+# clone fabric master code to local
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
