@@ -11,7 +11,7 @@ MAINTAINER Baohua Yang <yangbaohua@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-        && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev \
+        && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
         && rm -rf /var/cache/apt
 
 # install rocksdb
