@@ -9,7 +9,7 @@ Docker images for [Hyperledger](https://www.hyperledger.org) Fabric base image.
 
 For more information about this image and its history, please see the relevant manifest file in the [`yeasy/docker-hyperledger-fabric-base` GitHub repo](https://github.com/yeasy/docker-hyperledger-fabric-base).
 
-If you want to quickly deploy a local cluster without any configuration and vagrant, please refer to [Start hyperledger clsuter using compose](https://github.com/yeasy/docker-compose-files#hyperledger).
+If you want to quickly deploy a local cluster without any configuration and vagrant, please refer to [Start hyperledger cluster using compose](https://github.com/yeasy/docker-compose-files#hyperledger).
 
 # What is hyperledger-fabric-base?
 Docker image with hyperledger fabric base, which will be utilized as chaincode running environment.
