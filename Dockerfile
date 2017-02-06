@@ -19,13 +19,13 @@ RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0
         && chmod a+x /usr/local/bin/chaintool
 
 # install rocksdb
-RUN cd /tmp \
-        && git clone --single-branch -b v4.1 --depth 1 https://github.com/facebook/rocksdb.git \
-        && cd rocksdb \
-        && PORTABLE=1 make shared_lib \
-        && INSTALL_PATH=/usr/local make install-shared \
-        && ldconfig \
-        && rm -rf /tmp/rocksdb
+#RUN cd /tmp \
+#        && git clone --single-branch -b v4.1 --depth 1 https://github.com/facebook/rocksdb.git \
+#        && cd rocksdb \
+#        && PORTABLE=1 make shared_lib \
+#        && INSTALL_PATH=/usr/local make install-shared \
+#        && ldconfig \
+#        && rm -rf /tmp/rocksdb
 
 RUN mkdir -p /var/hyperledger/db \
         && mkdir -p /var/hyperledger/production \
