@@ -14,6 +14,10 @@ RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
         && rm -rf /var/cache/apt
 
+# install some dev tools, optionally
+RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.1/chaintool > /usr/local/bin \
+        && chmod a+x /usr/local/bin/chaintool
+
 # install rocksdb
 RUN cd /tmp \
         && git clone --single-branch -b v4.1 --depth 1 https://github.com/facebook/rocksdb.git \
