@@ -27,10 +27,7 @@ RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0
 #        && ldconfig \
 #        && rm -rf /tmp/rocksdb
 
-RUN mkdir -p /var/hyperledger/db \
-        && mkdir -p /var/hyperledger/production \
-# fabric-order need this
-        && mkdir -p /etc/hyperledger/fabric 
+RUN mkdir -p /var/hyperledger/db /var/hyperledger/production
 
 # clone fabric master code to local
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
