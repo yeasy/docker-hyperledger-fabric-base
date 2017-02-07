@@ -10,11 +10,19 @@ MAINTAINER Baohua Yang <yangbaohua@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV FABRIC_PATH $GOPATH/src/github.com/hyperledger/fabric
+
+# The data and config dir, can map external one with -v
+VOLUME /var/hyperledger
+VOLUME /etc/hyperledger/fabric
+
+RUN mkdir -p /var/hyperledger/db /var/hyperledger/production
+
 RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
         && rm -rf /var/cache/apt
 
-# install some dev tools, optionally
+# install chaintool
 RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.1/chaintool > /usr/local/bin \
         && chmod a+x /usr/local/bin/chaintool
 
@@ -27,15 +35,17 @@ RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0
 #        && ldconfig \
 #        && rm -rf /tmp/rocksdb
 
-RUN mkdir -p /var/hyperledger/db /var/hyperledger/production
-
-# clone fabric master code to local
+# clone fabric master code
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && cp $GOPATH/src/github.com/hyperledger/fabric/devenv/limits.conf /etc/security/limits.conf
-
-WORKDIR $GOPATH/src/github.com/hyperledger/fabric
+        && cp $FABRIC_PATH/devenv/limits.conf /etc/security/limits.conf \
+# install gotools
+        && cd $FABRIC_PATH/ \
+        && make gotools \
+        && make clean
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
+
+WORKDIR $FABRIC_PATH
