@@ -42,8 +42,7 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cp $FABRIC_PATH/devenv/limits.conf /etc/security/limits.conf \
 # install gotools
         && cd $FABRIC_PATH/ \
-        && make gotools \
-        && make clean
+        && make gotools
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
