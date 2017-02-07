@@ -42,7 +42,13 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cp $FABRIC_PATH/devenv/limits.conf /etc/security/limits.conf \
 # install gotools
         && cd $FABRIC_PATH/ \
-        && make gotools
+        && go get github.com/golang/lint/golint \
+        && go get github.com/kardianos/govendor \
+        && go get golang.org/x/tools/cmd/goimports \
+        && go get github.com/golang/protobuf/protoc-gen-go \
+        && go get github.com/onsi/ginkgo/ginkgo \
+        && go get github.com/axw/gocov/... \
+        && go get github.com/AlekSi/gocov-xml
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
