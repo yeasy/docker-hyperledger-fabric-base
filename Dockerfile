@@ -14,7 +14,7 @@ ENV FABRIC_PATH $GOPATH/src/github.com/hyperledger/fabric
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
-VOLUME /etc/hyperledger/fabric
+#VOLUME /etc/hyperledger/fabric
 
 RUN mkdir -p /var/hyperledger/db /var/hyperledger/production
 
