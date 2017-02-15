@@ -10,7 +10,7 @@ MAINTAINER Baohua Yang <yangbaohua@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV FABRIC_PATH $GOPATH/src/github.com/hyperledger/fabric
+ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
@@ -39,9 +39,9 @@ RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && cp $FABRIC_PATH/devenv/limits.conf /etc/security/limits.conf \
+        && cp $FABRIC_HOME/devenv/limits.conf /etc/security/limits.conf \
 # install gotools
-        && cd $FABRIC_PATH/ \
+        && cd $FABRIC_HOME/ \
         && go get github.com/golang/lint/golint \
         && go get github.com/kardianos/govendor \
         && go get golang.org/x/tools/cmd/goimports \
@@ -53,4 +53,4 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-WORKDIR $FABRIC_PATH
+WORKDIR $FABRIC_HOME
