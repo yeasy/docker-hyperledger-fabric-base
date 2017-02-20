@@ -11,6 +11,12 @@ MAINTAINER Baohua Yang <yangbaohua@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
+ENV ARCH x86_64
+
+# version for the base images, e.g., fabric-ccenv, fabric-baseos
+ENV BASE_VERSION 1.0.0-preview
+# version for the peer/orderer binaries
+ENV PROJECT_VERSION 1.0.0-preview
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
