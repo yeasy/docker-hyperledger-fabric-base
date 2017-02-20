@@ -16,7 +16,7 @@ ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
 
-RUN mkdir -p /var/hyperledger/db /var/hyperledger/production
+RUN mkdir -p /var/hyperledger/db /var/hyperledger/production /chaincode/input /chaincode/output
 
 RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
