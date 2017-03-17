@@ -32,10 +32,10 @@ RUN apt-get update \
 RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.1/chaintool > /usr/local/bin/chaintool \
         && chmod a+x /usr/local/bin/chaintool
 
-# clone fabric master code
+# clone fabric v1.0.0-alpha code
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && git clone --single-branch -b v1.0.0-alpha --depth 1 http://gerrit.hyperledger.org/r/fabric \
         && cp $FABRIC_HOME/devenv/limits.conf /etc/security/limits.conf \
         && cd $FABRIC_HOME/ \
 # install configtxgen
