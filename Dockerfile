@@ -23,7 +23,9 @@ ENV PROJECT_VERSION 1.0.0-preview
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
 
-RUN mkdir -p /var/hyperledger/db /var/hyperledger/production /chaincode/input /chaincode/output
+RUN mkdir -p /var/hyperledger/db /var/hyperledger/production \
+# only useful when use as a ccenv image
+        /chaincode/input /chaincode/output
 
 RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
