@@ -5,17 +5,18 @@
 
 # Currently, the binary will look for config files at corresponding path.
 
-FROM golang:1.7
-MAINTAINER Baohua Yang <yangbaohua@gmail.com>
+FROM golang:1.8
+LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Only useful for this Dockerfile
 ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH x86_64
 
 # version for the base images, e.g., fabric-ccenv, fabric-baseos
-ENV BASE_VERSION 1.0.0-preview
-# version for the peer/orderer binaries
+ENV BASE_VERSION 0.3.0
+# version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 ENV PROJECT_VERSION 1.0.0-preview
 
 # The data and config dir, can map external one with -v
@@ -53,3 +54,6 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 RUN ln -s $GOPATH /opt/gopath
 
 WORKDIR $FABRIC_HOME
+
+LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
+      org.hyperledger.fabric.base.version=${BASE_VERSION}
