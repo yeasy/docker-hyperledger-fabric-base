@@ -18,6 +18,10 @@ ENV ARCH x86_64
 ENV BASE_VERSION 0.3.0
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 ENV PROJECT_VERSION 1.0.0-preview
+# generic builder environment: builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
+ENV DOCKER_NS hyperledger
+# for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
+ENV BASE_DOCKER_NS hyperledger
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
