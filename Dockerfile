@@ -23,13 +23,16 @@ ENV DOCKER_NS hyperledger
 # for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
 ENV BASE_DOCKER_NS hyperledger
 
+ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
+
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
 
 RUN mkdir -p /var/hyperledger/db /var/hyperledger/production \
 # only useful when use as a ccenv image
-        /chaincode/input /chaincode/output
+        /chaincode/input /chaincode/output \
+        $FABRIC_CFG_PATH
 
 RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
@@ -39,22 +42,37 @@ RUN apt-get update \
 RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.3/chaintool > /usr/local/bin/chaintool \
         && chmod a+x /usr/local/bin/chaintool
 
-# clone fabric master code
-RUN mkdir -p $GOPATH/src/github.com/hyperledger \
-        && cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && cp $FABRIC_HOME/devenv/limits.conf /etc/security/limits.conf \
-        && cd $FABRIC_HOME/ \
-# install configtxgen
-        && CGO_CFLAGS=" " go install -ldflags "-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASE_VERSION} -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
 # install gotools
-        && go get github.com/golang/lint/golint \
+RUN go get github.com/golang/lint/golint \
         && go get github.com/kardianos/govendor \
         && go get golang.org/x/tools/cmd/goimports \
         && go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/onsi/ginkgo/ginkgo \
         && go get github.com/axw/gocov/... \
         && go get github.com/AlekSi/gocov-xml
+
+# clone hyperledger fabric code
+RUN mkdir -p $GOPATH/src/github.com/hyperledger \
+        && cd $GOPATH/src/github.com/hyperledger \
+        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && cp $FABRIC_HOME/devenv/limits.conf /etc/security/limits.conf
+
+# install configtxgen and cryptogen
+RUN cd $FABRIC_HOME/ \
+        && CGO_CFLAGS=" " go install -ldflags \
+        "-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
+        -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASE_VERSION} \
+        -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
+        -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
+        -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger" \
+        github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
+        && CGO_CFLAGS=" " go install -ldflags \
+        "-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
+        -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASE_VERSION} \
+        -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
+        -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
+        -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger" \
+        github.com/hyperledger/fabric/common/tools/cryptogen
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
