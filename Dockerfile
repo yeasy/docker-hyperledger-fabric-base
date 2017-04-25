@@ -24,7 +24,7 @@ ENV PROJECT_VERSION 1.0.0-preview
 ENV DOCKER_NS hyperledger
 # for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
 ENV BASE_DOCKER_NS hyperledger
-ENV LDFLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
+ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
              -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASE_VERSION} \
              -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
              -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
@@ -68,8 +68,8 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 
 # install configtxgen and cryptogen
 RUN cd $FABRIC_HOME/ \
-        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LDFLAGS" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LDFLAGS" github.com/hyperledger/fabric/common/tools/cryptogen
+        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
+        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
