@@ -8,12 +8,14 @@
 FROM golang:1.8
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
+# Reused in all children images
+ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Only useful for this Dockerfile
 ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH x86_64
-
 # version for the base images, e.g., fabric-ccenv, fabric-baseos
 ENV BASE_VERSION 0.3.0
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
@@ -23,15 +25,15 @@ ENV DOCKER_NS hyperledger
 # for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
 ENV BASE_DOCKER_NS hyperledger
 
-ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
-
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
 
-RUN mkdir -p /var/hyperledger/db /var/hyperledger/production \
+RUN mkdir -p /var/hyperledger/db \
+        /var/hyperledger/production \
 # only useful when use as a ccenv image
-        /chaincode/input /chaincode/output \
+        /chaincode/input \
+        /chaincode/output \
         $FABRIC_CFG_PATH
 
 RUN apt-get update \
