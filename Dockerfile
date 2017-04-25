@@ -68,8 +68,8 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 
 # install configtxgen and cryptogen
 RUN cd $FABRIC_HOME/ \
-        && CGO_CFLAGS=" " go install -ldflags $LDFLAGS github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
-        && CGO_CFLAGS=" " go install -ldflags $LDFLAGS github.com/hyperledger/fabric/common/tools/cryptogen
+        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags $LDFLAGS github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
+        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags $LDFLAGS github.com/hyperledger/fabric/common/tools/cryptogen
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
