@@ -14,7 +14,7 @@ ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
 ENV DEBIAN_FRONTEND noninteractive
 
 # Only useful for this Dockerfile
-ENV FABRIC_HOME $GOPATH/src/github.com/hyperledger/fabric
+ENV FABRIC_ROOT $GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH x86_64
 # version for the base images, e.g., fabric-ccenv, fabric-baseos
 ENV BASE_VERSION 0.3.0
@@ -63,18 +63,18 @@ RUN go get github.com/golang/lint/golint \
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && cp $FABRIC_HOME/devenv/limits.conf /etc/security/limits.conf \
-        && cp -r $FABRIC_HOME/sampleconfig/* $FABRIC_CFG_PATH
+        && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
+        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
 
 # install configtxgen and cryptogen
-RUN cd $FABRIC_HOME/ \
+RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
         && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-WORKDIR $FABRIC_HOME
+WORKDIR $FABRIC_ROOT
 
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASE_VERSION}
