@@ -17,7 +17,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT $GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH x86_64
 # version for the base images, e.g., fabric-ccenv, fabric-baseos
-ENV BASE_VERSION 0.3.0
+ENV BASE_VERSION 0.3.1
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 ENV PROJECT_VERSION 1.0.0-preview
 # generic builder environment: builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
@@ -69,7 +69,8 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 # install configtxgen and cryptogen
 RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/configtxlator
 
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
