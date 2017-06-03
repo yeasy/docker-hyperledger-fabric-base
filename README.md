@@ -15,7 +15,7 @@ For more information about this image and its history, please see the relevant m
 If you want to quickly deploy a local cluster without any configuration and vagrant, please refer to [Start hyperledger cluster using compose](https://github.com/yeasy/docker-compose-files#hyperledger).
 
 # What is hyperledger-fabric-base?
-Docker image with hyperledger fabric base, which will be utilized as chaincode running environment.
+Docker image with hyperledger fabric base, which will be utilized as the base to build peer and orderer, and the chaincode running environment.
 
 # How to use this image?
 The docker image is auto built at [https://registry.hub.docker.com/u/yeasy/hyperledger-fabric-base/](https://registry.hub.docker.com/u/yeasy/hyperledger-fabric-base/).
@@ -26,14 +26,17 @@ FROM yeasy/hyperledger-fabric-base:latest
 ```
 
 # Which image is based on?
-The image is built based on [golang](https://hub.docker.com/_/golang) 1.7 image.
+The image is built based on [golang](https://hub.docker.com/_/golang) 1.8 image.
 
 # What has been changed?
 ## install dependencies
 Install required  libsnappy-dev, zlib1g-dev, libbz2-dev.
 
-## install rocksdb
-Install required  rocksdb 4.1.
+## clone fabric code
+Clone the fabric code from repo.
+
+## install tools
+Install required tools like chaintools, go tools, cryptogen, configtxgen, configtxlator.
 
 # Supported Docker versions
 

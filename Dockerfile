@@ -66,7 +66,7 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
 
-# install configtxgen and cryptogen
+# install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen \
