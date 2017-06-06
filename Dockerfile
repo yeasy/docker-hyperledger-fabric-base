@@ -8,12 +8,12 @@
 FROM golang:1.8
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Reused in all children images
 ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Only useful for this Dockerfile
+# Only useful for the building
 ENV FABRIC_ROOT $GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH x86_64
 # version for the base images, e.g., fabric-ccenv, fabric-baseos
@@ -77,6 +77,9 @@ RUN cd $FABRIC_ROOT/ \
 RUN ln -s $GOPATH /opt/gopath
 
 WORKDIR $FABRIC_ROOT
+
+# temporarily fix the `go list` complain problem if not setting this, which is required in chaincode packaging
+ENV GOROOT=/usr/local/go
 
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASE_VERSION}
