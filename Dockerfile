@@ -76,10 +76,10 @@ RUN cd $FABRIC_ROOT/ \
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-WORKDIR $FABRIC_ROOT
-
 # temporarily fix the `go list` complain problem if not setting this, which is required in chaincode packaging
 ENV GOROOT=/usr/local/go
+
+WORKDIR $FABRIC_ROOT
 
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASE_VERSION}
