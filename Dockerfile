@@ -29,11 +29,6 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
              -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
              -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
              -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
-        
-
-# The data and config dir, can map external one with -v
-VOLUME /var/hyperledger
-#VOLUME /etc/hyperledger/fabric
 
 RUN mkdir -p /var/hyperledger/db \
         /var/hyperledger/production \
@@ -73,10 +68,14 @@ RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "$LD_FLAGS" github.com/hyperledger/fabric/common/tools/configtxlator
 
+# The data and config dir, can map external one with -v
+VOLUME /var/hyperledger
+#VOLUME /etc/hyperledger/fabric
+
 # this is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-# temporarily fix the `go list` complain problem if not setting this, which is required in chaincode packaging
+# temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
 ENV GOROOT=/usr/local/go
 
 WORKDIR $FABRIC_ROOT
