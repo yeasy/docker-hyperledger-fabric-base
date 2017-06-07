@@ -53,7 +53,7 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/onsi/ginkgo/ginkgo \
         && go get github.com/axw/gocov/... \
         && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/matm/gocov-html
+        && go get github.com/AlekSi/gocov-xml
 
 # clone hyperledger fabric code and add configuration files
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
