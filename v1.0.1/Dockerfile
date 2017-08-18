@@ -61,7 +61,7 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
 #&& git clone --single-branch -b master http://gerrit.hyperledger.org/r/fabric \
-        && git clone --single-branch -b master http://github.com/hyperledger.org/fabric \
+        && git clone --single-branch -b master https://github.com/hyperledger/fabric.git \
         && cd fabric && git checkout v${PROJECT_VERSION} \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
