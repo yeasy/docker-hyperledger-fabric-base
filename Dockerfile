@@ -41,7 +41,7 @@ RUN mkdir -p /var/hyperledger/db \
 
 RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
-        && apt-get install -y tree jq \
+        && apt-get install -y tree jq unzip \
         && rm -rf /var/cache/apt
 
 # install chaintool
