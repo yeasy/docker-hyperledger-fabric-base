@@ -16,12 +16,12 @@ ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
 # Only useful for the building
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH=x86_64
-# version for the base images, e.g., fabric-ccenv, fabric-baseos
-ENV BASEIMAGE_RELEASE=0.3.2
+# version for the base images
+ENV BASEIMAGE_RELEASE=0.4.1
 # BASE_VERSION is required in core.yaml to build and run cc container
 ENV BASE_VERSION=1.1.0
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
-ENV PROJECT_VERSION=1.1.0-pre
+ENV PROJECT_VERSION=1.1.0
 # generic builder environment: builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
