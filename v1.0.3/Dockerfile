@@ -17,7 +17,7 @@ ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 ENV ARCH=x86_64
 # version for the base images
-ENV BASEIMAGE_RELEASE=0.4.2
+ENV BASEIMAGE_RELEASE=0.3.2
 # BASE_VERSION is required in core.yaml to build and run cc container
 ENV BASE_VERSION=1.0.3
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
