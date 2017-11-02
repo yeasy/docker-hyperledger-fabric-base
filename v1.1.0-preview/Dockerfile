@@ -19,9 +19,9 @@ ENV ARCH=x86_64
 # version for the base images
 ENV BASEIMAGE_RELEASE=0.4.2
 # BASE_VERSION is required in core.yaml to build and run cc container
-ENV BASE_VERSION=1.1.0
+ENV BASE_VERSION=1.1.0-preview
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
-ENV PROJECT_VERSION=1.1.0
+ENV PROJECT_VERSION=1.1.0-preview
 # generic builder environment: builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
@@ -63,7 +63,10 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 # clone hyperledger fabric code and add configuration files
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
 
