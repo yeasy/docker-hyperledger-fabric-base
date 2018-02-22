@@ -70,11 +70,15 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
 
+# temp resolve the incompatibility between golang 19.4 and old version of pkcs11 pkg
+RUN cd $FABRIC_ROOT \
+       && govendor fetch github.com/miekg/pkcs11
+
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
-        && go install -tags "nopkcs11" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
-        && go install -tags "nopkcs11" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
-        && go install -tags "nopkcs11" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/configtx/tool/configtxgen \
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
 # Install block-listener
 RUN cd $FABRIC_ROOT/examples/events/block-listener \
