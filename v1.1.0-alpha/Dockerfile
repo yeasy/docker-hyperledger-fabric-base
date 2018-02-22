@@ -72,9 +72,9 @@ RUN mkdir -p $GOPATH/src/github.com/hyperledger \
 
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
-        && CGO_CFLAGS=" " go install -tags "nopkcs11" -ldflags "-X github.com/hyperledger/fabric/common/tools/configtxgen/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/cryptogen \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/common/tools/configtxlator/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/configtxlator
+        && go install -ldflags "-X github.com/hyperledger/fabric/common/tools/configtxgen/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/configtxgen \
+        && go install -ldflags "-X github.com/hyperledger/fabric/common/tools/cryptogen/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/cryptogen \
+        && go install -ldflags "-X github.com/hyperledger/fabric/common/tools/configtxlator/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/common/tools/configtxlator
 
 # Install block-listener
 RUN cd $FABRIC_ROOT/examples/events/block-listener \
