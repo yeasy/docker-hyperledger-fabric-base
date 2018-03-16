@@ -5,6 +5,7 @@ Docker images for [Hyperledger](https://www.hyperledger.org) Fabric base image.
 # Supported tags and respective Dockerfile links
 
 * [`latest` (latest/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/Dockerfile): Default to track latest master branch.
+* [`1.1.0` (v1.1.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.1.0/Dockerfile): 1.1.0 release.
 * [`1.1.0-rc1` (v1.1.0-rc1/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.1.0-rc1/Dockerfile): 1.1.0-rc1 release.
 * [`1.0.6` (v1.0.6/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.0.6/Dockerfile): 1.0.6 release.
 * [`1.0.5` (v1.0.5/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.0.5/Dockerfile): 1.0.5 release.
@@ -23,7 +24,7 @@ Docker images for [Hyperledger](https://www.hyperledger.org) Fabric base image.
 
 For more information about this image and its history, please see the relevant manifest file in the [`yeasy/docker-hyperledger-fabric-base` GitHub repo](https://github.com/yeasy/docker-hyperledger-fabric-base).
 
-If you want to quickly deploy a local cluster without any configuration and vagrant, please refer to [Start hyperledger cluster using compose](https://github.com/yeasy/docker-compose-files#hyperledger).
+If you want to quickly deploy a local cluster without any configuration and vagrant, please refer to [Start hyperledger cluster using compose](https://github.com/yeasy/docker-compose-files#hyperledger_fabric).
 
 # What is hyperledger-fabric-base?
 Docker image with hyperledger fabric base, which will be utilized as the base to build peer and orderer, and the chaincode running environment.

@@ -31,8 +31,7 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
              -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
              -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
              -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger \
-             -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
-             -linkmode external -extldflags '-static -lpthread'"
+             -X github.com/hyperledger/fabric/common/metadata.Experimental=false"
 
 RUN mkdir -p /var/hyperledger/db \
         /var/hyperledger/production \
@@ -65,15 +64,18 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 # clone hyperledger fabric code and add configuration files
 RUN mkdir -p $GOPATH/src/github.com/hyperledger \
         && cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
 
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
-        && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxgen \
-        && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
-        && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxgen \
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
+        && go install -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
 # Install block-listener
 RUN cd $FABRIC_ROOT/examples/events/block-listener \
