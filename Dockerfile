@@ -75,6 +75,9 @@ RUN cd $FABRIC_ROOT/ \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
+# install fabric-ca client
+RUN go install -ldflags "-X github.com/hyperledger/fabric-ca/lib/metadata.Version=$PROJECT_VERSION -linkmode external -extldflags '-static -lpthread'" github.com/hyperledger/fabric-ca/cmd/...
+
 # Install block-listener
 RUN cd $FABRIC_ROOT/examples/events/block-listener \
         && go build \
