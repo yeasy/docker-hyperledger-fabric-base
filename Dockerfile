@@ -1,19 +1,20 @@
+# https://github.com/yeasy/docker-hyperledger-fabric-base
+#
 # Dockerfile for Hyperledger fabric base image.
-# If you need a peer node to run, please see the yeasy/hyperledger-peer image.
+# If you only need quickly deploy a fabric network, please see
+# * yeasy/hyperledger-fabric-peer
+# * yeasy/hyperledger-fabric-orderer
+# * yeasy/hyperledger-fabric-ca
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/db and /var/hyperledger/production
 
-# Currently, the binary will look for config files at corresponding path.
 
 FROM golang:1.10
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Reused in all children images
-ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
-
-# Only useful for the building
+# Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 ENV CHAINTOOL_VERSION=1.1.1
 
@@ -24,6 +25,7 @@ ENV BASEIMAGE_RELEASE=0.4.8
 # BASE_VERSION is required in makefile as the base release number
 ENV BASE_VERSION=1.2.0
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
+# PROJECT_VERSION is required in core.yaml to build image for cc container
 ENV PROJECT_VERSION=1.2.0
 # generic golang cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
@@ -37,17 +39,21 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
              -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
              -linkmode external -extldflags '-static -lpthread'"
 
+# Peer config path
+ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
 RUN mkdir -p /var/hyperledger/db \
         /var/hyperledger/production \
-# only useful when use as a ccenv image
+	$GOPATH/src/github.com/hyperledger \
+	$FABRIC_CFG_PATH \
         /chaincode/input \
-        /chaincode/output \
-        $FABRIC_CFG_PATH
+        /chaincode/output
 
+# Install development dependencies
 RUN apt-get update \
-        && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libltdl-dev \
-        && apt-get install -y tree jq \
-        && apt-get install -y unzip \
+        && apt-get install -y apt-utils python-dev \
+        && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
+        && apt-get install -y python-pip \
+        && apt-get install -y tree jq unzip\
         && rm -rf /var/cache/apt
 
 # install chaintool
@@ -65,12 +71,13 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/client9/misspell/cmd/misspell \
         && go get github.com/AlekSi/gocov-xml
 
-# clone hyperledger fabric code and add configuration files
-RUN mkdir -p $GOPATH/src/github.com/hyperledger \
-        && cd $GOPATH/src/github.com/hyperledger \
+# Clone the Hyperledger Fabric code and cp sample config files
+RUN cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
-        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH
+        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/ \
+        && cp $FABRIC_ROOT/examples/e2e_cli/configtx.yaml $FABRIC_CFG_PATH/ \
+        && cp $FABRIC_ROOT/examples/e2e_cli/crypto-config.yaml $FABRIC_CFG_PATH/
 
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
@@ -78,25 +85,25 @@ RUN cd $FABRIC_ROOT/ \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
-# install fabric-ca client
-RUN go install -ldflags "-X github.com/hyperledger/fabric-ca/lib/metadata.Version=$PROJECT_VERSION -linkmode external -extldflags '-static -lpthread'" github.com/hyperledger/fabric-ca/cmd/...
 
 # Install block-listener
 RUN cd $FABRIC_ROOT/examples/events/block-listener \
-        && go build \
-        && mv block-listener $GOPATH/bin
+        && go install \
+        && go clean
+
+
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
 
-# this is only a workaround for current hard-coded problem when using as fabric-baseimage.
-RUN ln -s $GOPATH /opt/gopath
 
 # temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
 ENV GOROOT=/usr/local/go
 
 WORKDIR $FABRIC_ROOT
 
+# This is only a workaround for current hard-coded problem when using as fabric-baseimage.
+RUN ln -s $GOPATH /opt/gopath
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASEIMAGE_RELEASE}
