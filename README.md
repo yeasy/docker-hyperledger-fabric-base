@@ -6,6 +6,7 @@ Docker images for [Hyperledger](https://www.hyperledger.org) Fabric base image.
 
 * [`latest` (latest/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/Dockerfile): Default to track latest master branch.
 * [`1.1.0` (v1.1.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.1.0/Dockerfile): 1.1.0 release.
+* [`1.2.0` (v1.2.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.2.0/Dockerfile): 1.2.0 release.
 * [`1.1.0-rc1` (v1.1.0-rc1/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.1.0-rc1/Dockerfile): 1.1.0-rc1 release.
 * [`1.0.6` (v1.0.6/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.0.6/Dockerfile): 1.0.6 release.
 * [`1.0.5` (v1.0.5/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.0.5/Dockerfile): 1.0.5 release.
