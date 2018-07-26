@@ -91,6 +91,8 @@ RUN cd $FABRIC_ROOT/examples/events/block-listener \
         && go install \
         && go clean
 
+# Install discover cmd
+RUN CGO_CFLAGS=" " go install -tags "experimental" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${BASE_VERSION}" github.com/hyperledger/fabric/cmd/discover
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
