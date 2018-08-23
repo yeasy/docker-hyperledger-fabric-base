@@ -86,8 +86,8 @@ RUN cd $FABRIC_ROOT/ \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
 
-# Install block-listener
-RUN cd $FABRIC_ROOT/examples/events/block-listener \
+# Install eventsclient
+RUN cd $FABRIC_ROOT/examples/events/eventsclient \
         && go install \
         && go clean
 
