@@ -23,10 +23,10 @@ ENV ARCH=amd64
 # version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
 ENV BASEIMAGE_RELEASE=0.4.13
 # BASE_VERSION is required in core.yaml for the runtime fabric-baseos
-ENV BASE_VERSION=1.4.0
+ENV BASE_VERSION=1.3.0
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 # PROJECT_VERSION is required in core.yaml to build image for cc container
-ENV PROJECT_VERSION=1.4.0
+ENV PROJECT_VERSION=1.3.0
 # generic golang cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
@@ -73,7 +73,10 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/ \
         && cp $FABRIC_ROOT/examples/e2e_cli/configtx.yaml $FABRIC_CFG_PATH/ \
