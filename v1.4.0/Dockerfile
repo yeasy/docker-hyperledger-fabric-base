@@ -9,7 +9,7 @@
 # Data is stored under /var/hyperledger/db and /var/hyperledger/production
 
 
-FROM golang:1.10
+FROM golang:1.11
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -21,7 +21,7 @@ ENV CHAINTOOL_RELEASE=1.1.2
 # Architecture of the node
 ENV ARCH=amd64
 # version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
-ENV BASEIMAGE_RELEASE=0.4.13
+ENV BASEIMAGE_RELEASE=0.4.14
 # BASE_VERSION is required in core.yaml for the runtime fabric-baseos
 ENV BASE_VERSION=1.4.0-rc1
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
@@ -63,13 +63,15 @@ RUN curl -fL https://nexus.hyperledger.org/content/repositories/releases/org/hyp
 
 # install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/kardianos/govendor \
-        && go get github.com/golang/lint/golint \
-        && go get golang.org/x/tools/cmd/goimports \
-        && go get github.com/onsi/ginkgo/ginkgo \
+        && go get github.com/maxbrunsfeld/counterfeiter \
         && go get github.com/axw/gocov/... \
+        && go get github.com/AlekSi/gocov-xml \
+        && go get golang.org/x/tools/cmd/goimports \
+        && go get golang.org/x/lint/golint \
+        && go get github.com/estesp/manifest-tool \
         && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/AlekSi/gocov-xml
+        && go get github.com/estesp/manifest-tool \
+        && go get github.com/onsi/ginkgo/ginkgo
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
@@ -79,15 +81,14 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && mv fabric-${PROJECT_VERSION} fabric \
         && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/ \
-        && cp $FABRIC_ROOT/examples/e2e_cli/configtx.yaml $FABRIC_CFG_PATH/ \
-        && cp $FABRIC_ROOT/examples/e2e_cli/crypto-config.yaml $FABRIC_CFG_PATH/
+        && cp $FABRIC_ROOT/examples/cluster/config/configtx.yaml $FABRIC_CFG_PATH/ \
+        && cp $FABRIC_ROOT/examples/cluster/config/cryptogen.yaml $FABRIC_CFG_PATH/
 
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxgen \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
-
 
 # Install eventsclient
 RUN cd $FABRIC_ROOT/examples/events/eventsclient \
