@@ -5,6 +5,7 @@ Docker images for [Hyperledger](https://www.hyperledger.org) Fabric base image.
 # Supported tags and respective Dockerfile links
 
 * [`latest` (latest/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/Dockerfile): Default to track latest master branch.
+* [`1.4.0` (v1.4.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.4.0/Dockerfile): 1.4.0 release.
 * [`1.3.0` (v1.3.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.3.0/Dockerfile): 1.3.0 release.
 * [`1.2.0` (v1.2.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.2.0/Dockerfile): 1.2.0 release.
 * [`1.1.0` (v1.1.0/Dockerfile)](https://github.com/yeasy/docker-hyperledger-fabric-base/blob/master/v1.1.0/Dockerfile): 1.1.0 release.
