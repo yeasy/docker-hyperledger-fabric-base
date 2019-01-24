@@ -76,10 +76,9 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
         && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && cp $FABRIC_ROOT/devenv/limits.conf /etc/security/limits.conf \
-        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/ \
-        && cp $FABRIC_ROOT/examples/cluster/config/configtx.yaml $FABRIC_CFG_PATH/ \
-        && cp $FABRIC_ROOT/examples/cluster/config/cryptogen.yaml $FABRIC_CFG_PATH/
+        && echo "*                hard    nofile          10000" >> /etc/security/limits.conf \
+        && echo "*                soft    nofile          10000" >> /etc/security/limits.conf \
+        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # install configtxgen, cryptogen and configtxlator
 RUN cd $FABRIC_ROOT/ \
@@ -87,19 +86,12 @@ RUN cd $FABRIC_ROOT/ \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/cryptogen \
         && go install -tags "experimental" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/common/tools/configtxlator
 
-
-# Install eventsclient
-RUN cd $FABRIC_ROOT/examples/events/eventsclient \
-        && go install \
-        && go clean
-
 # Install discover cmd
 RUN CGO_CFLAGS=" " go install -tags "experimental" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${BASE_VERSION}" github.com/hyperledger/fabric/cmd/discover
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
 #VOLUME /etc/hyperledger/fabric
-
 
 # temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
 ENV GOROOT=/usr/local/go
