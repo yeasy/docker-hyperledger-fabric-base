@@ -24,7 +24,6 @@ ENV ARCH=amd64
 ENV BASEIMAGE_RELEASE=0.4.15
 # BASE_VERSION is used in Makefile as major version
 ENV BASE_VERSION=2.0.0
-# version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
 ENV PROJECT_VERSION=1.4.0
 # generic golang cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
@@ -51,47 +50,44 @@ RUN mkdir -p /var/hyperledger/db \
 
 # Install development dependencies
 RUN apt-get update \
-        && apt-get install -y apt-utils python-dev \
-        && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
-        && apt-get install -y python-pip \
-        && apt-get install -y tree jq unzip\
-        && rm -rf /var/cache/apt
+    && apt-get install -y apt-utils python-dev \
+    && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
+    && apt-get install -y python-pip \
+    && apt-get install -y tree jq unzip\
+    && rm -rf /var/cache/apt
 
 # install chaintool
 #RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.3/chaintool > /usr/local/bin/chaintool \
 RUN curl -fL https://nexus.hyperledger.org/content/repositories/releases/org/hyperledger/fabric/hyperledger-fabric/chaintool-${CHAINTOOL_RELEASE}/hyperledger-fabric-chaintool-${CHAINTOOL_RELEASE}.jar > /usr/local/bin/chaintool \
-        && chmod a+x /usr/local/bin/chaintool
+    && chmod a+x /usr/local/bin/chaintool
 
 # install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/maxbrunsfeld/counterfeiter \
-        && go get github.com/axw/gocov/... \
-        && go get github.com/AlekSi/gocov-xml \
-        && go get golang.org/x/tools/cmd/goimports \
-        && go get golang.org/x/lint/golint \
-        && go get github.com/estesp/manifest-tool \
-        && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/estesp/manifest-tool \
-        && go get github.com/onsi/ginkgo/ginkgo
+    && go get github.com/maxbrunsfeld/counterfeiter \
+    && go get github.com/axw/gocov/... \
+    && go get github.com/AlekSi/gocov-xml \
+    && go get golang.org/x/tools/cmd/goimports \
+    && go get golang.org/x/lint/golint \
+    && go get github.com/estesp/manifest-tool \
+    && go get github.com/client9/misspell/cmd/misspell \
+    && go get github.com/estesp/manifest-tool \
+    && go get github.com/onsi/ginkgo/ginkgo
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
-        && echo "*                hard    nofile          10000" >> /etc/security/limits.conf \
-        && echo "*                soft    nofile          10000" >> /etc/security/limits.conf \
-        && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
+    && git clone --single-branch -b master --depth 1 http://gerrit.hyperledger.org/r/fabric \
+    && echo "*                hard    nofile          10000" >> /etc/security/limits.conf \
+    && echo "*                soft    nofile          10000" >> /etc/security/limits.conf \
+    && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
-# install configtxgen, cryptogen and configtxlator
+# install configtxgen, cryptogen, configtxlator, discover, token and idemixgen
 RUN cd $FABRIC_ROOT/ \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/discover \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/common/tools/idemixgen
-
-# Install discover cmd
-RUN CGO_CFLAGS=" " go install -tags "experimental" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${BASE_VERSION}" github.com/hyperledger/fabric/cmd/discover
+    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
+    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
+    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
+    && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/discover \
+    && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
+    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/common/tools/idemixgen
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
