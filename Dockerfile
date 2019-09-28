@@ -79,6 +79,10 @@ RUN cd $GOPATH/src/github.com/hyperledger \
     && echo "*                soft    nofile          10000" >> /etc/security/limits.conf \
     && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
+# Add external farbric chaincode dependencies
+RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
+    && go get github.com/hyperledger/fabric-protos-go/peer
+
 # install configtxgen, cryptogen, configtxlator, discover, token and idemixgen
 RUN cd $FABRIC_ROOT/ \
     && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
