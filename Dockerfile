@@ -20,7 +20,7 @@ ENV CHAINTOOL_RELEASE=1.1.2
 # Architecture of the node
 ENV ARCH=amd64
 # version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
-ENV BASEIMAGE_RELEASE=0.4.15
+ENV BASEIMAGE_RELEASE=0.4.16
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.0.0
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
