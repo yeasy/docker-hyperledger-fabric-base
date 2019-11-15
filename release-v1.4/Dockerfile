@@ -9,24 +9,24 @@
 # Data is stored under /var/hyperledger/db and /var/hyperledger/production
 
 
-FROM golang:1.11.5
+FROM golang:1.12.12
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
-ENV CHAINTOOL_RELEASE=1.1.2
+ENV CHAINTOOL_RELEASE=1.1.3
 
 # Architecture of the node
 ENV ARCH=amd64
 # version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
-ENV BASEIMAGE_RELEASE=0.4.14
+ENV BASEIMAGE_RELEASE=0.4.18
 # BASE_VERSION is required in core.yaml for the runtime fabric-baseos
-ENV BASE_VERSION=1.4.0
+ENV BASE_VERSION=1.4.4
 # version for the peer/orderer binaries, the community version tracks the hash value like 1.0.0-snapshot-51b7e85
 # PROJECT_VERSION is required in core.yaml to build image for cc container
-ENV PROJECT_VERSION=1.4.0
+ENV PROJECT_VERSION=1.4.4
 # generic golang cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
