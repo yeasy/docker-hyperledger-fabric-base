@@ -6,7 +6,7 @@
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
-# Data is stored under /var/hyperledger/db and /var/hyperledger/production
+# Data is stored under /var/hyperledger/production
 
 FROM golang:1.13
 LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
@@ -40,8 +40,7 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${BASE_VE
 
 # Peer config path
 ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
-RUN mkdir -p /var/hyperledger/db \
-        /var/hyperledger/production \
+RUN mkdir -p /var/hyperledger/production \
         $GOPATH/src/github.com/hyperledger \
         $FABRIC_CFG_PATH \
         /chaincode/input \
