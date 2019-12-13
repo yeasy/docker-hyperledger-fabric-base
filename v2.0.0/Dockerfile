@@ -9,7 +9,7 @@
 # Data is stored under /var/hyperledger/production
 
 FROM golang:1.13
-LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
+LABEL maintainer "Baohua Yang <yeasy.github.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -24,16 +24,16 @@ ENV BASEIMAGE_RELEASE=0.4.18
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.0.0
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.0.0-beta
+ENV PROJECT_VERSION=2.0.0
 # generic golang cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
 ENV BASE_DOCKER_NS=hyperledger
-ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${BASE_VERSION} \
-             -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASEIMAGE_RELEASE} \
-             -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
-             -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
-             -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
+ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
+              -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASEIMAGE_RELEASE} \
+              -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
+              -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
+              -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
 
 # -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
 # -linkmode external -extldflags '-static -lpthread'"
@@ -51,10 +51,10 @@ RUN apt-get update \
         && apt-get install -y apt-utils python-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
         && apt-get install -y python-pip \
-        && apt-get install -y tree jq unzip\
+        && apt-get install -y vim tree jq unzip\
         && rm -rf /var/cache/apt
 
-# install chaintool
+# Install chaintool
 #RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.3/chaintool > /usr/local/bin/chaintool \
 RUN curl -fL https://nexus.hyperledger.org/content/repositories/releases/org/hyperledger/fabric/hyperledger-fabric/chaintool-${CHAINTOOL_RELEASE}/hyperledger-fabric-chaintool-${CHAINTOOL_RELEASE}.jar > /usr/local/bin/chaintool \
         && chmod a+x /usr/local/bin/chaintool
@@ -73,30 +73,29 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
-        && unzip v${PROJECT_VERSION}.zip \
-        && rm v${PROJECT_VERSION}.zip \
-        && mv fabric-${PROJECT_VERSION} fabric \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}-beta.zip \
+        && unzip v${PROJECT_VERSION}-beta.zip \
+        && rm v${PROJECT_VERSION}-beta.zip \
+        && mv fabric-${PROJECT_VERSION}-beta fabric \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # Add external farbric chaincode dependencies
 RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
-    && go get github.com/hyperledger/fabric-protos-go/peer
+        && go get github.com/hyperledger/fabric-protos-go/peer
 
-# install configtxgen, cryptogen, configtxlator, discover and idemixgen
+# Install configtxgen, cryptogen, configtxlator, discover and idemixgen
 RUN cd $FABRIC_ROOT/ \
-    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
-    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
-    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
-    && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/discover \
+        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
+        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
+        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/discover \
 #&& CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
-    && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/idemixgen
+        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/idemixgen
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
-#VOLUME /etc/hyperledger/fabric
 
-# temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
+# Temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
 ENV GOROOT=/usr/local/go
 
 WORKDIR $FABRIC_ROOT

@@ -5,11 +5,12 @@
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
+
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
 FROM golang:1.13
-LABEL maintainer "Baohua Yang <yangbaohua@gmail.com>"
+LABEL maintainer "Baohua Yang <yeasy.github.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -29,11 +30,11 @@ ENV PROJECT_VERSION=2.0.0
 ENV DOCKER_NS=hyperledger
 # for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
 ENV BASE_DOCKER_NS=hyperledger
-ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${BASE_VERSION} \
-             -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASEIMAGE_RELEASE} \
-             -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
-             -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
-             -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
+ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
+              -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASEIMAGE_RELEASE} \
+              -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
+              -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
+              -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
 
 # -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
 # -linkmode external -extldflags '-static -lpthread'"
@@ -51,10 +52,10 @@ RUN apt-get update \
         && apt-get install -y apt-utils python-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
         && apt-get install -y python-pip \
-        && apt-get install -y tree jq unzip\
+        && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
 
-# install chaintool
+# Install chaintool
 #RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.3/chaintool > /usr/local/bin/chaintool \
 RUN curl -fL https://nexus.hyperledger.org/content/repositories/releases/org/hyperledger/fabric/hyperledger-fabric/chaintool-${CHAINTOOL_RELEASE}/hyperledger-fabric-chaintool-${CHAINTOOL_RELEASE}.jar > /usr/local/bin/chaintool \
         && chmod a+x /usr/local/bin/chaintool
@@ -102,5 +103,6 @@ WORKDIR $FABRIC_ROOT
 
 # This is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
+
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASEIMAGE_RELEASE}
