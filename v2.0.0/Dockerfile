@@ -5,6 +5,7 @@
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
+
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
@@ -51,7 +52,7 @@ RUN apt-get update \
         && apt-get install -y apt-utils python-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
         && apt-get install -y python-pip \
-        && apt-get install -y vim tree jq unzip\
+        && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
 
 # Install chaintool
@@ -77,6 +78,8 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && unzip v${PROJECT_VERSION}-beta.zip \
         && rm v${PROJECT_VERSION}-beta.zip \
         && mv fabric-${PROJECT_VERSION}-beta fabric \
+        && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
+        && echo "*                soft    nofile          65536" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # Add external farbric chaincode dependencies
@@ -102,5 +105,6 @@ WORKDIR $FABRIC_ROOT
 
 # This is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
+
 LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
       org.hyperledger.fabric.base.version=${BASEIMAGE_RELEASE}
