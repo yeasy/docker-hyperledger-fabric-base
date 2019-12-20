@@ -18,9 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 ENV CHAINTOOL_RELEASE=1.1.3
 
-# Architecture of the node
-ENV ARCH=amd64
-# version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
+# version for the base images (baseos, baseimage, ccenv, etc.)
 ENV BASEIMAGE_RELEASE=0.4.18
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.0.0
@@ -31,7 +29,6 @@ ENV DOCKER_NS=hyperledger
 # for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
-              -X github.com/hyperledger/fabric/common/metadata.BaseVersion=${BASEIMAGE_RELEASE} \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
               -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
