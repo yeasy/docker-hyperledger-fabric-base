@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 ENV CHAINTOOL_RELEASE=1.1.3
 
-# version for the base images (baseos, baseimage, ccenv, etc.)
+# version for the base images (baseimage, etc.)
 ENV BASEIMAGE_RELEASE=0.4.18
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.0.0
