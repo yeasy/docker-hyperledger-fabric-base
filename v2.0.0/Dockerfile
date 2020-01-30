@@ -72,10 +72,10 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}-beta.zip \
-        && unzip v${PROJECT_VERSION}-beta.zip \
-        && rm v${PROJECT_VERSION}-beta.zip \
-        && mv fabric-${PROJECT_VERSION}-beta fabric \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          65536" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
