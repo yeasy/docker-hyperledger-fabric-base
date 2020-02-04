@@ -16,7 +16,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
-ENV CHAINTOOL_RELEASE=1.1.3
 
 # version for the base images (baseimage, etc.)
 ENV BASEIMAGE_RELEASE=0.4.18
@@ -52,11 +51,6 @@ RUN apt-get update \
         && apt-get install -y python-pip \
         && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
-
-# Install chaintool
-#RUN curl -L https://github.com/hyperledger/fabric-chaintool/releases/download/v0.10.3/chaintool > /usr/local/bin/chaintool \
-RUN curl -fL https://nexus.hyperledger.org/content/repositories/releases/org/hyperledger/fabric/hyperledger-fabric/chaintool-${CHAINTOOL_RELEASE}/hyperledger-fabric-chaintool-${CHAINTOOL_RELEASE}.jar > /usr/local/bin/chaintool \
-        && chmod a+x /usr/local/bin/chaintool
 
 # install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
