@@ -9,7 +9,7 @@
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
-FROM golang:1.12
+FROM golang:1.13
 LABEL maintainer "Baohua Yang <yeasy.github.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -21,11 +21,11 @@ ENV CHAINTOOL_RELEASE=1.1.3
 # Architecture of the node
 ENV ARCH=amd64
 # version for the base images (baseos, baseimage, ccenv, etc.), used in core.yaml as BaseVersion
-ENV BASEIMAGE_RELEASE=0.4.18
+ENV BASEIMAGE_RELEASE=0.4.20
 # BASE_VERSION is required in core.yaml for the Go and Node cc runtime 
-ENV BASE_VERSION=1.4.4
+ENV BASE_VERSION=1.4.7
 # PROJECT_VERSION is required in core.yaml to build image for cc container
-ENV PROJECT_VERSION=1.4.4
+ENV PROJECT_VERSION=1.4.7
 # generic Go cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:latest
 ENV DOCKER_NS=hyperledger
 # for Go cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
