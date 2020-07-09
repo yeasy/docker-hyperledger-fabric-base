@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # version for the base images (baseimage, etc.)
-ENV BASEIMAGE_RELEASE=0.4.18
+ENV BASEIMAGE_RELEASE=0.4.21
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.2.0
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
