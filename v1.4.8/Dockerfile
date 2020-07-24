@@ -26,6 +26,8 @@ ENV BASEIMAGE_RELEASE=0.4.21
 ENV BASE_VERSION=1.4.8
 # PROJECT_VERSION is required in core.yaml to build image for cc container
 ENV PROJECT_VERSION=1.4.8
+# generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
+ENV TWO_DIGIT_VERSION=1.4
 # generic Go cc builder environment (core.yaml): builder: $(DOCKER_NS)/fabric-ccenv:latest
 ENV DOCKER_NS=hyperledger
 # for Go cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
