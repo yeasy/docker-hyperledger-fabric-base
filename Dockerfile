@@ -35,7 +35,7 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
 
 # Peer config path
 ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
-RUN mkdir -p /var/hyperledger/production \
+RUN mkdir -p /var/hyperledger/production \ # store the osn's ledgers
         $GOPATH/src/github.com/hyperledger \
         $FABRIC_CFG_PATH \
         /chaincode/input \
