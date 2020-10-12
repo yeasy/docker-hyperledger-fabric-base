@@ -18,9 +18,9 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=2.2.0
+ENV BASE_VERSION=2.2.1
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.2.0
+ENV PROJECT_VERSION=2.2.1
 # generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
 ENV TWO_DIGIT_VERSION=2.2
 ENV DOCKER_NS=hyperledger
@@ -35,7 +35,7 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
 
 # Peer config path
 ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
-RUN mkdir -p /var/hyperledger/production \ # store the osn's ledgers
+RUN mkdir -p /var/hyperledger/production \
         $GOPATH/src/github.com/hyperledger \
         $FABRIC_CFG_PATH \
         /chaincode/input \
