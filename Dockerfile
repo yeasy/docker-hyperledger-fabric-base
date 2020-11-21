@@ -18,11 +18,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=2.2.1
+ENV BASE_VERSION=2.3.0
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.2.1
+ENV PROJECT_VERSION=2.3.0
+ENV TWO_DIGIT_VERSION=2.3
 # generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
-ENV TWO_DIGIT_VERSION=2.2
 ENV DOCKER_NS=hyperledger
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
@@ -67,7 +67,11 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
-# Install configtxgen, cryptogen, configtxlator and discover
+# Add external farbric chaincode dependencies
+RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
+        && go get github.com/hyperledger/fabric-protos-go/peer
+
+# Install configtxgen, cryptogen, configtxlator, discover and idemixgen
 RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
@@ -75,10 +79,6 @@ RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/cmd/discover \
 #&& CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/idemixgen
-
-# Add external fabric chaincode dependencies
-RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
-        && go get github.com/hyperledger/fabric-protos-go/peer
 
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger

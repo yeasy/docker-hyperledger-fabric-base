@@ -5,7 +5,7 @@
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
-
+#
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
@@ -49,7 +49,7 @@ RUN apt-get update \
         && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
 
-# install gotools
+# Install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/maxbrunsfeld/counterfeiter \
         && go get github.com/axw/gocov/... \

@@ -5,7 +5,7 @@
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
-
+#
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
@@ -18,7 +18,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # version for the base images (baseimage, etc.)
-ENV BASEIMAGE_RELEASE=0.4.18
+ENV BASEIMAGE_RELEASE=0.4.21
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.3.0
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
@@ -52,7 +52,7 @@ RUN apt-get update \
         && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
 
-# install gotools
+# Install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/maxbrunsfeld/counterfeiter \
         && go get github.com/axw/gocov/... \
