@@ -5,9 +5,9 @@
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
 # * yeasy/hyperledger-fabric-ca
-#
+
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
-# Data is stored under /var/hyperledger/production
+# Data is stored under /var/hyperledger/db and /var/hyperledger/production
 
 FROM golang:1.13
 LABEL maintainer "Baohua Yang <yeasy.github.com>"
@@ -51,10 +51,12 @@ RUN mkdir -p /var/hyperledger/production \
 
 # Install development dependencies
 RUN apt-get update \
-        && apt-get install -y apt-utils python-dev \
+        && apt-get install -y apt-utils python3-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
-        && apt-get install -y python-pip \
+        && apt-get install -y python3-pip \
         && apt-get install -y vim tree jq unzip \
+#&& pip install --upgrade pip==9.0.1 \
+        && pip3 install behave nose docker-compose pyinotify \
         && rm -rf /var/cache/apt
 
 # Install gotools
