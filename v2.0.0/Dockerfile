@@ -19,14 +19,18 @@ ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # version for the base images (baseimage, etc.)
 ENV BASEIMAGE_RELEASE=0.4.18
+
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.0.0
+
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
 ENV PROJECT_VERSION=2.0.0
 ENV TWO_DIGIT_VERSION=2.0
+
 # generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
 ENV DOCKER_NS=hyperledger
-# for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
+
+# for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(BASEIMAGE_RELEASE)
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
@@ -46,12 +50,14 @@ RUN mkdir -p /var/hyperledger/production \
 
 # Install development dependencies
 RUN apt-get update \
-        && apt-get install -y apt-utils python-dev \
+        && apt-get install -y apt-utils python3-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
-        && apt-get install -y python-pip \
+        && apt-get install -y python3-pip \
         && apt-get install -y vim tree jq unzip \
+        && pip3 install behave nose docker-compose \
+        && pip3 install pyinotify \
         && rm -rf /var/cache/apt
-
+	
 # install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/maxbrunsfeld/counterfeiter \
@@ -59,9 +65,8 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/AlekSi/gocov-xml \
         && go get golang.org/x/tools/cmd/goimports \
         && go get golang.org/x/lint/golint \
-        && go get github.com/estesp/manifest-tool \
+        && go get github.com/estesp/manifest-tool/... \
         && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/estesp/manifest-tool \
         && go get github.com/onsi/ginkgo/ginkgo
 
 # Clone the Hyperledger Fabric code and cp sample config files
@@ -70,11 +75,11 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && unzip v${PROJECT_VERSION}.zip \
         && rm v${PROJECT_VERSION}.zip \
         && mv fabric-${PROJECT_VERSION} fabric \
-        && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
+	&& echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
-# Add external farbric chaincode dependencies
+# Add external fabric chaincode dependencies
 RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
         && go get github.com/hyperledger/fabric-protos-go/peer
 
@@ -84,7 +89,6 @@ RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/discover \
-#&& CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
         && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/idemixgen
 
 # The data and config dir, can map external one with -v
