@@ -66,9 +66,8 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/AlekSi/gocov-xml \
         && go get golang.org/x/tools/cmd/goimports \
         && go get golang.org/x/lint/golint \
-        && go get github.com/estesp/manifest-tool \
+        && go get github.com/estesp/manifest-tool/... \
         && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/estesp/manifest-tool \
         && go get github.com/onsi/ginkgo/ginkgo
 
 # Clone the Hyperledger Fabric code and cp sample config files
@@ -87,7 +86,7 @@ RUN cd $FABRIC_ROOT/ \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "" github.com/hyperledger/fabric/common/tools/configtxgen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "" github.com/hyperledger/fabric/common/tools/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "" github.com/hyperledger/fabric/common/tools/configtxlator \
-	&& CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${BASE_VERSION}" github.com/hyperledger/fabric/cmd/discover
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${BASE_VERSION}" github.com/hyperledger/fabric/cmd/discover
 
 # Install chaintool
 RUN curl -fL https://hyperledger.jfrog.io/hyperledger/fabric-maven/org/hyperledger/fabric-chaintool/${CHAINTOOL_RELEASE}/fabric-chaintool-${CHAINTOOL_RELEASE}.jar > /usr/local/bin/chaintool \
