@@ -17,8 +17,6 @@ ENV DEBIAN_FRONTEND noninteractive
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
-# version for the base images (baseimage, etc.)
-ENV BASEIMAGE_RELEASE=0.4.22
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.2.3
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
@@ -26,7 +24,6 @@ ENV PROJECT_VERSION=2.2.3
 ENV TWO_DIGIT_VERSION=2.2
 # generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
 ENV DOCKER_NS=hyperledger
-# for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
@@ -65,7 +62,10 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b release-2.0 --depth 1 https://github.com/hyperledger/fabric.git \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
@@ -94,5 +94,4 @@ WORKDIR $FABRIC_ROOT
 # This is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
-      org.hyperledger.fabric.base.version=${BASEIMAGE_RELEASE}
+LABEL org.hyperledger.fabric.version=${PROJECT_VERSION}
