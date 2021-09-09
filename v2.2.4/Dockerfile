@@ -45,18 +45,18 @@ RUN mkdir -p /var/hyperledger/production \
 RUN apt-get update \
         && apt-get install -y apt-utils python-dev \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
-        && apt-get install -y python-pip \
+        && apt-get install -y python3-pip \
         && apt-get install -y vim tree jq unzip \
         && rm -rf /var/cache/apt
 
 # Install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/maxbrunsfeld/counterfeiter \
+        && go get github.com/maxbrunsfeld/counterfeiter/v6 \
         && go get github.com/axw/gocov/... \
         && go get github.com/AlekSi/gocov-xml \
         && go get golang.org/x/tools/cmd/goimports \
         && go get golang.org/x/lint/golint \
-        && go get github.com/estesp/manifest-tool/... \
+#&& go get github.com/estesp/manifest-tool/... \
         && go get github.com/client9/misspell/cmd/misspell \
         && go get github.com/onsi/ginkgo/ginkgo
 
