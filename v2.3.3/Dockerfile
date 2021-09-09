@@ -19,7 +19,6 @@ ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.3.3
-
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
 ENV PROJECT_VERSION=2.3.3
 
@@ -67,7 +66,10 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b main --depth 1 https://github.com/hyperledger/fabric.git \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
