@@ -9,7 +9,7 @@
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
-FROM golang:1.15
+FROM golang:1.16
 LABEL maintainer "Baohua Yang <yeasy.github.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -20,9 +20,9 @@ ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 # version for the base images (baseimage, etc.)
 ENV BASEIMAGE_RELEASE=0.4.22
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=2.3.2
+ENV BASE_VERSION=2.3.3
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.3.2
+ENV PROJECT_VERSION=2.3.3
 ENV TWO_DIGIT_VERSION=2.3
 # generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
 ENV DOCKER_NS=hyperledger
@@ -54,12 +54,12 @@ RUN apt-get update \
 
 # Install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/maxbrunsfeld/counterfeiter \
+        && go get github.com/maxbrunsfeld/counterfeiter/v6 \
         && go get github.com/axw/gocov/... \
         && go get github.com/AlekSi/gocov-xml \
         && go get golang.org/x/tools/cmd/goimports \
         && go get golang.org/x/lint/golint \
-        && go get github.com/estesp/manifest-tool/... \
+#&& go get github.com/estesp/manifest-tool/... \
         && go get github.com/client9/misspell/cmd/misspell \
         && go get github.com/onsi/ginkgo/ginkgo
 
