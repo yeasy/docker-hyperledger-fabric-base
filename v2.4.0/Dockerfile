@@ -1,6 +1,7 @@
 # https://github.com/yeasy/docker-hyperledger-fabric-base
 #
 # Dockerfile for Hyperledger fabric base image.
+
 # If you only need quickly deploy a fabric network, please see
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
@@ -78,17 +79,21 @@ RUN cd $GOPATH/src/github.com/hyperledger \
 RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
         && go get github.com/hyperledger/fabric-protos-go/peer
 
-# Install configtxgen, cryptogen, configtxlator, discover, idemixgen and osnadmin
-RUN cd $FABRIC_ROOT/ \
+# Install configtxgen, cryptogen, configtxlator, discover, ledgerutil and osnadmin
+RUN cd $FABRIC_ROOT \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxlator \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/discover \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/idemixgen \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/osnadmin
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/ledgerutil \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/osnadmin \
+	&& go clean
 
+# This is useful to debug local code with mapping inside
+VOLUME $GOPATH/src/github.com/hyperledger
 # The data and config dir, can map external one with -v
 VOLUME /var/hyperledger
+VOLUME $FABRIC_CFG_PATH
 
 # Temporarily fix the `go list` complain problem, which is required in chaincode packaging, see core/chaincode/platforms/golang/platform.go#GetDepoymentPayload
 ENV GOROOT=/usr/local/go

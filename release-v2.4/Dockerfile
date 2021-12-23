@@ -17,12 +17,14 @@ ENV DEBIAN_FRONTEND noninteractive
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
+# version for the base images (baseimage, etc.)
+ENV BASEIMAGE_RELEASE=0.4.22
 # BASE_VERSION is used in metadata.Version as major version
 ENV BASE_VERSION=2.4.1
 
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
 ENV PROJECT_VERSION=2.4.1
-
+ENV TWO_DIGIT_VERSION=2.3
 # generic environment (core.yaml) for builder and runtime: e.g., builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION), golang, java, node
 ENV DOCKER_NS=hyperledger
 ENV TWO_DIGIT_VERSION=2.4
@@ -54,6 +56,7 @@ RUN apt-get update \
         && pip3 install pyinotify \
         && rm -rf /var/cache/apt
 
+
 # Install gotools
 RUN go get github.com/golang/protobuf/protoc-gen-go \
         && go get github.com/maxbrunsfeld/counterfeiter/v6 \
@@ -67,22 +70,21 @@ RUN go get github.com/golang/protobuf/protoc-gen-go \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b main --depth 1 https://github.com/hyperledger/fabric.git \
+        && git clone --single-branch -b release-2.4 --depth 1 https://github.com/hyperledger/fabric.git \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
-# Add external fabric chaincode dependencies
+# Add external farbric chaincode dependencies
 RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
         && go get github.com/hyperledger/fabric-protos-go/peer
 
-# Install configtxgen, cryptogen, configtxlator, discover, idemixgen, ledgerutil and osnadmin
+# Install configtxgen, cryptogen, configtxlator, discover, ledgerutil, osnadmin
 RUN cd $FABRIC_ROOT \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxgen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxlator \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/cryptogen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/discover \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/idemixgen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/ledgerutil \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/osnadmin \
 	&& go clean
@@ -93,8 +95,6 @@ RUN cd $FABRIC_ROOT/ccaas_builder \
         && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/detect \
         && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/release \
 	&& go clean
-
-#ADD crypto-config $FABRIC_CFG_PATH/crypto-config
 
 
 # This is useful to debug local code with mapping inside
