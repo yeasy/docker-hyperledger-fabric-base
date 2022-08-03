@@ -9,7 +9,7 @@
 # Workdir is set to $GOPATH/src/github.com/hyperledger/fabric
 # Data is stored under /var/hyperledger/production
 
-FROM golang:1.16
+FROM golang:1.18
 LABEL maintainer "Baohua Yang <yeasy.github.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -17,14 +17,12 @@ ENV DEBIAN_FRONTEND noninteractive
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
-# version for the base images (baseimage, etc.)
-ENV BASEIMAGE_RELEASE=0.4.22
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=2.4.1
+ENV BASE_VERSION=2.4.5
 
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.4.1
-ENV TWO_DIGIT_VERSION=2.3
+ENV PROJECT_VERSION=2.4.5
+
 # generic environment (core.yaml) for builder and runtime: e.g., builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION), golang, java, node
 ENV DOCKER_NS=hyperledger
 ENV TWO_DIGIT_VERSION=2.4
@@ -56,17 +54,13 @@ RUN apt-get update \
         && pip3 install pyinotify \
         && rm -rf /var/cache/apt
 
-
 # Install gotools
-RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/maxbrunsfeld/counterfeiter/v6 \
-        && go get github.com/axw/gocov/... \
-        && go get github.com/AlekSi/gocov-xml \
-        && go get golang.org/x/tools/cmd/goimports \
-        && go get golang.org/x/lint/golint \
-#&& go get github.com/estesp/manifest-tool/... \
-        && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/onsi/ginkgo/ginkgo
+RUN go install github.com/golang/protobuf/protoc-gen-go@latest \
+        && go install github.com/maxbrunsfeld/counterfeiter/v6@latest \
+        && go install github.com/axw/gocov/gocov@latest \
+        && go install github.com/axw/gocov/gocov@latest \
+        && go install golang.org/x/tools/cmd/goimports@latest \
+        && go install github.com/onsi/ginkgo/ginkgo@latest
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
@@ -75,11 +69,11 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
-# Add external farbric chaincode dependencies
-RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
-        && go get github.com/hyperledger/fabric-protos-go/peer
+# Add external fabric chaincode dependencies
+#RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
+#        && go get github.com/hyperledger/fabric-protos-go/peer
 
-# Install configtxgen, cryptogen, configtxlator, discover, ledgerutil, osnadmin
+# Install configtxgen, cryptogen, configtxlator, discover, ledgerutil and osnadmin
 RUN cd $FABRIC_ROOT \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxgen \
         && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxlator \
@@ -95,7 +89,6 @@ RUN cd $FABRIC_ROOT/ccaas_builder \
         && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/detect \
         && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/release \
 	&& go clean
-
 
 # This is useful to debug local code with mapping inside
 VOLUME $GOPATH/src/github.com/hyperledger
