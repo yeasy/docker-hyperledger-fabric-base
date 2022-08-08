@@ -55,15 +55,12 @@ RUN apt-get update \
         && rm -rf /var/cache/apt
 
 # Install gotools
-RUN go get github.com/golang/protobuf/protoc-gen-go \
-        && go get github.com/maxbrunsfeld/counterfeiter/v6 \
-        && go get github.com/axw/gocov/... \
-        && go get github.com/AlekSi/gocov-xml \
-        && go get golang.org/x/tools/cmd/goimports \
-        && go get golang.org/x/lint/golint \
-#&& go get github.com/estesp/manifest-tool/... \
-        && go get github.com/client9/misspell/cmd/misspell \
-        && go get github.com/onsi/ginkgo/ginkgo
+RUN go install github.com/golang/protobuf/protoc-gen-go@latest \
+        && go install github.com/maxbrunsfeld/counterfeiter/v6@latest \
+        && go install github.com/axw/gocov/gocov@latest \
+        && go install github.com/axw/gocov/gocov@latest \
+        && go install golang.org/x/tools/cmd/goimports@latest \
+        && go install github.com/onsi/ginkgo/ginkgo@latest
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
@@ -73,8 +70,8 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # Add external fabric chaincode dependencies
-RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
-        && go get github.com/hyperledger/fabric-protos-go/peer
+#RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
+#        && go get github.com/hyperledger/fabric-protos-go/peer
 
 # Install configtxgen, cryptogen, configtxlator, discover, ledgerutil and osnadmin
 RUN cd $FABRIC_ROOT \
