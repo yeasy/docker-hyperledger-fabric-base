@@ -1,6 +1,7 @@
 # https://github.com/yeasy/docker-hyperledger-fabric-base
 #
 # Dockerfile for Hyperledger fabric base image.
+
 # If you only need quickly deploy a fabric network, please see
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
@@ -17,16 +18,16 @@ ENV DEBIAN_FRONTEND noninteractive
 # Only useful for this Dockerfile
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
-# version for the base images (baseimage, etc.)
-ENV BASEIMAGE_RELEASE=0.4.22
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=2.2.9
+ENV BASE_VERSION=2.4.7
+
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=2.2.9
-ENV TWO_DIGIT_VERSION=2.2
-# generic environment (core.yaml) for builder and runtime: builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION)
+ENV PROJECT_VERSION=2.4.7
+
+# generic environment (core.yaml) for builder and runtime: e.g., builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION), golang, java, node
 ENV DOCKER_NS=hyperledger
-# for golang or car's baseos for cc runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASEIMAGE_RELEASE)
+ENV TWO_DIGIT_VERSION=2.4
+
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
@@ -50,6 +51,8 @@ RUN apt-get update \
         && apt-get install -y libsnappy-dev zlib1g-dev libbz2-dev libyaml-dev libltdl-dev libtool \
         && apt-get install -y python3-pip \
         && apt-get install -y vim tree jq unzip \
+        && pip3 install behave nose docker-compose \
+        && pip3 install pyinotify \
         && rm -rf /var/cache/apt
 
 # Install gotools
@@ -62,7 +65,10 @@ RUN go install github.com/golang/protobuf/protoc-gen-go@latest \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b release-2.2 --depth 1 https://github.com/hyperledger/fabric.git \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
@@ -71,14 +77,22 @@ RUN cd $GOPATH/src/github.com/hyperledger \
 #RUN go get github.com/hyperledger/fabric-chaincode-go/shim \
 #        && go get github.com/hyperledger/fabric-protos-go/peer
 
-# Install configtxgen, cryptogen, configtxlator, discover and idemixgen
+# Install configtxgen, cryptogen, configtxlator, discover, ledgerutil and osnadmin
 RUN cd $FABRIC_ROOT \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxgen \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/cryptogen \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/configtxlator \
-        && CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/discover/metadata.Version=${PROJECT_VERSION}" github.com/hyperledger/fabric/cmd/discover \
-#&& CGO_CFLAGS=" " go install -tags "" -ldflags "-X github.com/hyperledger/fabric/cmd/token/metadata.Version=2.0.0" github.com/hyperledger/fabric/cmd/token \
-        && CGO_CFLAGS=" " go install -tags "" github.com/hyperledger/fabric/cmd/idemixgen
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxgen \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/configtxlator \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/cryptogen \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/discover \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/ledgerutil \
+        && CGO_CFLAGS=" " go install -tags "" -ldflags "${LD_FLAGS}" github.com/hyperledger/fabric/cmd/osnadmin \
+	&& go clean
+
+# Install ccaas_builder sample, since hlf v2.4.1
+RUN cd $FABRIC_ROOT/ccaas_builder \
+        && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/build \
+        && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/detect \
+        && go build -o /opt/hyperledger/ccaas_builder/bin/ ./cmd/release \
+	&& go clean
 
 # This is useful to debug local code with mapping inside
 VOLUME $GOPATH/src/github.com/hyperledger
@@ -94,5 +108,4 @@ WORKDIR $FABRIC_ROOT
 # This is only a workaround for current hard-coded problem when using as fabric-baseimage.
 RUN ln -s $GOPATH /opt/gopath
 
-LABEL org.hyperledger.fabric.version=${PROJECT_VERSION} \
-      org.hyperledger.fabric.base.version=${BASEIMAGE_RELEASE}
+LABEL org.hyperledger.fabric.version=${PROJECT_VERSION}
