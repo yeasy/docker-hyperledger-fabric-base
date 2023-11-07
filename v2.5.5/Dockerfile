@@ -1,6 +1,7 @@
 # https://github.com/yeasy/docker-hyperledger-fabric-base
 #
 # Dockerfile for Hyperledger fabric base image.
+
 # If you only need quickly deploy a fabric network, please see
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
@@ -18,23 +19,20 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV FABRIC_ROOT=$GOPATH/src/github.com/hyperledger/fabric
 
 # BASE_VERSION is used in metadata.Version as major version
-ENV BASE_VERSION=3.0.0
+ENV BASE_VERSION=2.5.5
 
 # PROJECT_VERSION is required in core.yaml for fabric-baseos and fabric-ccenv
-ENV PROJECT_VERSION=3.0.0
+ENV PROJECT_VERSION=2.5.5
 
 # generic environment (core.yaml) for builder and runtime: e.g., builder: $(DOCKER_NS)/fabric-ccenv:$(TWO_DIGIT_VERSION), golang, java, node
 ENV DOCKER_NS=hyperledger
-ENV TWO_DIGIT_VERSION=3.0
+ENV TWO_DIGIT_VERSION=2.5
 
 ENV BASE_DOCKER_NS=hyperledger
 ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT_VERSION} \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
               -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
-
-# Let binaries run without the libc/musl runtime
-ENV CGO_ENABLED 0
 
 # -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
 # -linkmode external -extldflags '-static -lpthread'"
@@ -67,10 +65,12 @@ RUN go install github.com/golang/protobuf/protoc-gen-go@latest \
 
 # Clone the Hyperledger Fabric code and cp sample config files
 RUN cd $GOPATH/src/github.com/hyperledger \
-        && git clone --single-branch -b main --depth 1 https://github.com/hyperledger/fabric.git \
+        && wget https://github.com/hyperledger/fabric/archive/v${PROJECT_VERSION}.zip \
+        && unzip v${PROJECT_VERSION}.zip \
+        && rm v${PROJECT_VERSION}.zip \
+        && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
-	&& echo 'hosts: files dns' > /etc/nsswitch.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # Add external fabric chaincode dependencies
