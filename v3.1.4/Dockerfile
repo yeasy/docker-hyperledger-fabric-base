@@ -1,6 +1,7 @@
 # https://github.com/yeasy/docker-hyperledger-fabric-base
 #
 # Dockerfile for Hyperledger fabric base image.
+
 # If you only need quickly deploy a fabric network, please see
 # * yeasy/hyperledger-fabric-peer
 # * yeasy/hyperledger-fabric-orderer
@@ -32,9 +33,6 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerLabel=org.hyperledger.fabric \
               -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
-
-# Let binaries run without the libc/musl runtime
-ENV CGO_ENABLED 0
 
 # -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
 # -linkmode external -extldflags '-static -lpthread'"
@@ -73,7 +71,6 @@ RUN cd $GOPATH/src/github.com/hyperledger \
         && mv fabric-${PROJECT_VERSION} fabric \
         && echo "*                hard    nofile          65536" >> /etc/security/limits.conf \
         && echo "*                soft    nofile          8192" >> /etc/security/limits.conf \
-	&& echo 'hosts: files dns' > /etc/nsswitch.conf \
         && cp -r $FABRIC_ROOT/sampleconfig/* $FABRIC_CFG_PATH/
 
 # Add external fabric chaincode dependencies

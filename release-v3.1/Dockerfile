@@ -33,9 +33,6 @@ ENV LD_FLAGS="-X github.com/hyperledger/fabric/common/metadata.Version=${PROJECT
               -X github.com/hyperledger/fabric/common/metadata.DockerNamespace=hyperledger \
               -X github.com/hyperledger/fabric/common/metadata.BaseDockerNamespace=hyperledger"
 
-# Let binaries run without the libc/musl runtime
-ENV CGO_ENABLED 0
-
 # -X github.com/hyperledger/fabric/common/metadata.Experimental=true \
 # -linkmode external -extldflags '-static -lpthread'"
 
